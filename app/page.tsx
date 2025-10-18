@@ -1,251 +1,227 @@
-"use client"
+import type { Metadata } from 'next';
+import TelegramChatFinder from './components/TelegramChatFinder';
 
-import { useState } from 'react';
+// SEO Metadata
+export const metadata: Metadata = {
+  title: 'Telegram Chat ID Finder - Get Chat IDs Instantly | Free Tool',
+  description: 'Find Telegram chat IDs quickly with our free tool. Enter your bot token to retrieve all chat IDs, group IDs, and channel IDs instantly. No data stored, 100% secure.',
+  keywords: [
+    'telegram chat id finder',
+    'telegram chat id',
+    'telegram group id finder',
+    'telegram channel id',
+    'telegram bot chat id',
+    'get telegram chat id',
+    'find telegram id',
+    'telegram chat id tool',
+    'telegram id finder',
+    'telegram bot token',
+    'how to find telegram chat id',
+    'telegram group chat id',
+    'telegram channel id finder',
+    'free telegram tool'
+  ],
+  authors: [{ name: 'Tai Mengseu' }],
+  creator: 'Tai Mengseu',
+  publisher: 'Tai Mengseu',
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://getchatid.mengseu.digital',
+    title: 'Telegram Chat ID Finder - Free Online Tool',
+    description: 'Instantly find Telegram chat IDs, group IDs, and channel IDs. Secure, fast, and free. No data stored.',
+    siteName: 'Telegram Chat ID Finder',
+    images: [
+      {
+        url: 'https://getchatid.mengseu.digital/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Telegram Chat ID Finder Tool',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Telegram Chat ID Finder - Get Chat IDs Instantly',
+    description: 'Free tool to find Telegram chat IDs. Secure and instant. No data stored.',
+    images: ['https://getchatid.mengseu.digital/twitter-image.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: 'https://getchatid.mengseu.digital',
+  },
+};
 
-interface Chat {
-  id: number;
-  name: string;
-  type: string;
-}
-
-interface TelegramChat {
-  id: number;
-  type: string;
-  title?: string;
-  first_name?: string;
-  last_name?: string;
-  username?: string;
-}
-
-interface TelegramUpdate {
-  message?: {
-    chat: TelegramChat;
-  };
-  my_chat_member?: {
-    chat: TelegramChat;
-  };
-}
-
-interface TelegramResponse {
-  ok: boolean;
-  result?: TelegramUpdate[];
-  description?: string;
-}
-
-export default function TelegramChatFinder() {
-  const [token, setToken] = useState<string>('');
-  const [chats, setChats] = useState<Chat[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
-  const [copiedId, setCopiedId] = useState<number | null>(null);
-
-  const getChatName = (chat: TelegramChat): string => {
-    if (chat.title) return chat.title;
-    if (chat.first_name) {
-      return chat.last_name ? `${chat.first_name} ${chat.last_name}` : chat.first_name;
-    }
-    if (chat.username) return `@${chat.username}`;
-    return 'Unknown';
-  };
-
-  const handleGetChatIds = async () => {
-    if (!token.trim()) {
-      setError('Please enter a valid bot token');
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-    setChats([]);
-
-    try {
-      const response = await fetch(
-        `https://api.telegram.org/bot${token}/getUpdates`
-      );
-      const data: TelegramResponse = await response.json();
-
-      if (!data.ok) {
-        throw new Error(data.description || 'Invalid token or API error');
-      }
-
-      if (!data.result || data.result.length === 0) {
-        setError('No chat updates found. Send a message to your bot first!');
-        setLoading(false);
-        return;
-      }
-
-      const uniqueChats = new Map<number, Chat>();
-      data.result.forEach((update: TelegramUpdate) => {
-        const chat = update.message?.chat || update.my_chat_member?.chat;
-        if (chat) {
-          uniqueChats.set(chat.id, {
-            id: chat.id,
-            name: getChatName(chat),
-            type: chat.type
-          });
-        }
-      });
-
-      setChats(Array.from(uniqueChats.values()));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch chat IDs. Please check your token.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const copyToClipboard = async (id: number) => {
-    try {
-      await navigator.clipboard.writeText(id.toString());
-      setCopiedId(id);
-      setTimeout(() => setCopiedId(null), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
-  };
-
+export default function TelegramChatIdFinderPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
-      <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            Telegram Chat ID Finder
-          </h1>
-          <p className="text-gray-600">
-            Enter your bot token to retrieve all chat IDs
-          </p>
-        </div>
+    <>
+      {/* JSON-LD Structured Data for WebApplication */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebApplication',
+            name: 'Telegram Chat ID Finder',
+            description: 'Free online tool to find Telegram chat IDs, group IDs, and channel IDs instantly using your bot token.',
+            url: 'https://getchatid.mengseu.digital',
+            applicationCategory: 'UtilityApplication',
+            operatingSystem: 'Any',
+            offers: {
+              '@type': 'Offer',
+              price: '0',
+              priceCurrency: 'USD',
+            },
+            author: {
+              '@type': 'Person',
+              name: 'Tai Mengseu',
+            },
+            featureList: [
+              'Find Telegram chat IDs',
+              'Get group chat IDs',
+              'Find channel IDs',
+              'Secure and private',
+              'No data storage',
+              'Free to use',
+            ],
+          }),
+        }}
+      />
 
-        <div className="bg-white shadow-lg rounded-2xl p-6 space-y-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Bot Token
-            </label>
-            <input
-              type="text"
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              placeholder="Enter your Telegram bot token"
-              className="w-full px-4 py-3 border  text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition outline-none"
-              disabled={loading}
-            />
-          </div>
+      {/* FAQ Schema for better search appearance */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: [
+              {
+                '@type': 'Question',
+                name: 'How do I find my Telegram chat ID?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'Enter your Telegram bot token in the tool above, and it will retrieve all chat IDs where your bot has received messages or been added.',
+                },
+              },
+              {
+                '@type': 'Question',
+                name: 'Is my bot token stored?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'No, your bot token is never stored. All requests are made directly from your browser to the Telegram API.',
+                },
+              },
+              {
+                '@type': 'Question',
+                name: 'What types of chat IDs can I find?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'You can find private chat IDs, group chat IDs, supergroup IDs, and channel IDs.',
+                },
+              },
+              {
+                '@type': 'Question',
+                name: 'Why am I not seeing any chat IDs?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'Make sure someone has sent a message to your bot or added your bot to a group/channel first. The bot needs at least one update to retrieve chat IDs.',
+                },
+              },
+            ],
+          }),
+        }}
+      />
 
-          <button
-            onClick={handleGetChatIds}
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
-          >
-            {loading ? (
-              <span className="flex items-center justify-center">
-                <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    fill="none"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                Fetching...
-              </span>
-            ) : (
-              'Get Chat IDs'
-            )}
-          </button>
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-3">
-              <svg className="text-red-500 flex-shrink-0 mt-0.5" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
-              </svg>
-              <p className="text-red-700 text-sm">{error}</p>
+      <main>
+        <TelegramChatFinder />
+        
+        {/* SEO Content Section */}
+        <article className="max-w-4xl mx-auto px-4 py-12 space-y-8">
+          <section className="prose prose-blue max-w-none">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              How to Use the Telegram Chat ID Finder
+            </h2>
+            <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
+              <ol className="list-decimal list-inside space-y-2 text-gray-700">
+                <li>Create a Telegram bot using <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@BotFather</a></li>
+                <li>Copy your bot token from BotFather</li>
+                <li>Send a message to your bot or add it to a group/channel</li>
+                <li>Paste your bot token in the field above</li>
+                <li>Click "Get Chat IDs" to retrieve all chat IDs</li>
+              </ol>
             </div>
-          )}
+          </section>
 
-          {chats.length > 0 && (
-            <div className="space-y-3 mt-6">
-              <h2 className="text-lg font-semibold text-gray-800">
-                Found {chats.length} Chat{chats.length !== 1 ? 's' : ''}
-              </h2>
-              <div className="border border-gray-200 rounded-lg overflow-hidden">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                        Chat Name
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                        Chat ID
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                        Type
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                        Action
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {chats.map((chat) => (
-                      <tr key={chat.id} className="hover:bg-gray-50 transition">
-                        <td className="px-4 py-3 text-sm text-gray-900">
-                          {chat.name}
-                        </td>
-                        <td className="px-4 py-3 text-sm font-mono text-gray-700">
-                          {chat.id}
-                        </td>
-                        <td className="px-4 py-3 text-sm">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {chat.type}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-sm">
-                          <button
-                            onClick={() => copyToClipboard(chat.id)}
-                            className="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-800 transition"
-                          >
-                            {copiedId === chat.id ? (
-                              <>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                  <polyline points="20 6 9 17 4 12"/>
-                                </svg>
-                                <span className="text-xs">Copied</span>
-                              </>
-                            ) : (
-                              <>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                                </svg>
-                                <span className="text-xs">Copy</span>
-                              </>
-                            )}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+          <section>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              What is a Telegram Chat ID?
+            </h2>
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <p className="text-gray-700 leading-relaxed">
+                A Telegram chat ID is a unique numerical identifier assigned to every chat, group, channel, or user on Telegram. 
+                Developers and bot creators use chat IDs to send messages programmatically through the Telegram Bot API. 
+                This tool helps you quickly find these IDs without manual inspection of API responses.
+              </p>
             </div>
-          )}
-        </div>
+          </section>
 
-        <div className="text-center mt-6 text-sm text-gray-600 flex items-center justify-center space-x-2">
-          <span>⚠️</span>
-          <span>We don't store your token. Data is fetched directly from Telegram API.</span>
-        </div>
-      </div>
-    </div>
+          <section>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              Why Use This Tool?
+            </h2>
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <ul className="space-y-3 text-gray-700">
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span><strong>Instant Results:</strong> Get all chat IDs in seconds</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span><strong>100% Secure:</strong> No data is stored on our servers</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span><strong>Free Forever:</strong> No registration or payment required</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span><strong>All Chat Types:</strong> Works with private chats, groups, and channels</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span><strong>Easy Copy:</strong> One-click copy to clipboard functionality</span>
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              Common Use Cases
+            </h2>
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <ul className="space-y-2 text-gray-700">
+                <li>• Bot development and testing</li>
+                <li>• Automated message sending to specific groups</li>
+                <li>• Integration with third-party services</li>
+                <li>• Notification systems</li>
+                <li>• Customer support automation</li>
+              </ul>
+            </div>
+          </section>
+        </article>
+      </main>
+    </>
   );
 }
